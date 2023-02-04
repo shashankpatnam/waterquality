@@ -16,7 +16,7 @@ class model(BaseModel):
     Trihalomethanes: float
     Turbidity: float
 
-pickle_in = open("C:\\Users\\patnam shashank\\PycharmProjects\\pythonProject6\\classifier.pkl", "rb")
+pickle_in = open("classifier.pkl", "rb")
 cls = pickle.load(pickle_in)
 
 myApp = FastAPI()
