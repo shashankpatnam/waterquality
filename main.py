@@ -46,4 +46,4 @@ def get_info():
     return "This is a API to predict Water Quality"
 
 
-uvicorn.run(myApp)
+
