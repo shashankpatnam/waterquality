@@ -17,8 +17,17 @@ class model(BaseModel):
     Trihalomethanes: float
     Turbidity: float
 
-pickle_in = open("classifier.pkl", "rb")
+pickle_in = open("class.pkl", "rb")
 cls = pickle.load(pickle_in)
+
+pickle_in2 = open("random_cls.pkl", "rb")
+cls1 = pickle.load(pickle_in2)
+
+def predic(df, num :int):
+    if(num==1):
+        return cls1.predict(df)
+    else:
+        return cls.predict(df)
 
 myApp = FastAPI()
 
@@ -27,7 +36,7 @@ def homeFunction():
     return "Hello"
 
 @myApp.post("/water_quality")
-def getStudent(quer : model):
+def getStudent(quer : model, mdl : int):
     query = quer.dict()
     parameters = [[query['ph'],query['Hardness'],query['Solids'],query['Chloramines'],query['Sulfate'],query['Conductivity'],query['Organic_carbon'],query['Trihalomethanes'],query['Turbidity']]]
     arr = numpy.array(parameters, dtype=float)
@@ -35,15 +44,11 @@ def getStudent(quer : model):
     for i in query.keys():
         columns.append(i)
     df = pandas.DataFrame(arr, columns=columns)
-    output = cls.predict(df)
+    output = predic(df, mdl)
     if(output[0]==1):
         return "Safe to drink"
     else:
         return "Unsafe to drink"
 
-@myApp.get("/gTinfo")
-def get_info():
-    return "This is a API to predict Water Quality"
-
-
-
+# gunicorn -w 4 -k uvicorn.workers.UvicornWorker mai:myApp
+#uvicorn.run(myApp)
